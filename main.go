@@ -8,7 +8,9 @@ import (
 )
 
 type Config struct {
-	Dotfiles []string `json:"dotfiles"`
+	GitRepoDir string   `json:"git_repo_dir"`
+	ID         int      `json:"id"`
+	Dotfiles   []string `json:"dotfiles"`
 }
 
 func main() {
@@ -24,18 +26,12 @@ func main() {
 		log.Fatal(err, " Cant convert to struct")
 	}
 
-	if _, err := os.Stat("./dotfiles"); os.IsNotExist(err) {
-		err = os.Mkdir("./dotfiles", 0755)
+	if _, err := os.Stat("./config.json"); os.IsNotExist(err) {
 		if err != nil {
 			log.Fatal(err, "Error")
 		}
 
 		exec.Command("bash", "-c", `
-			cd ./dotfiles/
-			git init
-			git add .
-			git commit -m "0"
-			git branch -M main
 			`).Run()
 	}
 
@@ -51,6 +47,8 @@ func main() {
 
 		os.WriteFile("./dotfiles/"+stat.Name(), file, 0644)
 	}
+
+	log.Print(config.ID)
 
 	cmd := exec.Command("bash", "-c", `
 		cd ./dotfiles/
