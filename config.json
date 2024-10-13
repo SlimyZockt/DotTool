@@ -1,0 +1,7 @@
+{
+    "dotfiles": [
+        "/home/myt/.bashrc",
+        "/home/myt/.config/fish/config.fish",
+        "/etc/nixos/configuration.nix"
+    ]
+}
