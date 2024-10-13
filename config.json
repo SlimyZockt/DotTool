@@ -1,5 +1,4 @@
 {
-    "id": 0,
     "git_repo_dir": "./MyToastersDotfiles/",
     "dotfiles": [
         "/home/myt/.bashrc",
