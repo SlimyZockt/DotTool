@@ -93,7 +93,10 @@ func app() {
 		log.Fatal(err)
 	}
 
-	log.Print("New id: ", id)
+	err = os.WriteFile(config.GitRepoDir+"id", []byte(strconv.Itoa(id)), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	cmd := exec.Command("bash", "-c",
 		"cd "+config.GitRepoDir+`
@@ -105,11 +108,6 @@ func app() {
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-
-	err = os.WriteFile(config.GitRepoDir+"id", []byte(strconv.Itoa(id)), 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	cmd.Run()
 }
