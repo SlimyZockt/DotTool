@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 )
 
 type Config struct {
@@ -15,21 +16,26 @@ type Config struct {
 var config Config
 
 func main() {
-	app()
-}
+	path, err := os.Executable()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-func app() {
-	if _, err := os.Stat("./config.json"); os.IsNotExist(err) {
+	dir := filepath.Dir(path)
+
+	config_path := filepath.Join(dir, "config.json")
+
+	if _, err := os.Stat(config_path); os.IsNotExist(err) {
 		if err != nil {
 			b, err := json.Marshal(&config)
 			if err != nil {
 				log.Fatal(err)
 			}
-			os.WriteFile("./config.json", b, 0644)
+			os.WriteFile(config_path, b, 0644)
 		}
 	}
 
-	config_file, err := os.ReadFile("./config.json")
+	config_file, err := os.ReadFile(config_path)
 	if err != nil {
 		log.Fatal(err)
 	}
