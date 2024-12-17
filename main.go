@@ -75,37 +75,10 @@ func app() {
 
 	}
 
-	id_data, err := os.ReadFile(config.GitRepoDir + "id")
-
-	if os.IsNotExist(err) {
-		err := os.WriteFile(config.GitRepoDir+"id", []byte("0"), 0644)
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		id = 0
-	} else if err == nil {
-		new_id, err := strconv.Atoi(string(id_data))
-		if err != nil {
-			log.Fatal(err)
-		}
-		id = new_id + 1
-
-	} else {
-		log.Fatal(err)
-	}
-
-	err = os.WriteFile(config.GitRepoDir+"id", []byte(strconv.Itoa(id)), 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	cmd := exec.Command("bash", "-c",
-		"cd "+config.GitRepoDir+`
+		"cd"+config.GitRepoDir+`
 		git diff -U0
-		git commit -am "`+
-			strconv.Itoa(id)+`"
+		git commit -am "$(git log -1 --pretty=%B)"
 		git push
 		`)
 
