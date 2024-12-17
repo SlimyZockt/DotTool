@@ -5,8 +5,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"os/signal"
-	"strconv"
 )
 
 type Config struct {
@@ -15,22 +13,8 @@ type Config struct {
 }
 
 var config Config
-var id int
 
 func main() {
-	interrupt_chan := make(chan os.Signal, 1)
-	signal.Notify(interrupt_chan, os.Interrupt)
-	go func() {
-		<-interrupt_chan
-
-		err := os.WriteFile(config.GitRepoDir+"id", []byte(strconv.Itoa(id-1)), 0644)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		os.Exit(1)
-	}()
-
 	app()
 }
 
@@ -51,8 +35,6 @@ func app() {
 	}
 
 	err = json.Unmarshal(config_file, &config)
-
-	log.Println(config)
 
 	if err != nil {
 		log.Fatal(err, " Cant convert to struct")
@@ -76,9 +58,10 @@ func app() {
 	}
 
 	cmd := exec.Command("bash", "-c",
-		"cd"+config.GitRepoDir+`
+		"cd "+config.GitRepoDir+`
 		git diff -U0
-		git commit -am "$(git log -1 --pretty=%B)"
+		git add .
+		git commit -am "$(($(git log -1 --pretty=%B)+1))"
 		git push
 		`)
 
