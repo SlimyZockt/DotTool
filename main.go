@@ -51,6 +51,9 @@ func app() {
 	}
 
 	err = json.Unmarshal(config_file, &config)
+
+	log.Println(config)
+
 	if err != nil {
 		log.Fatal(err, " Cant convert to struct")
 	}
