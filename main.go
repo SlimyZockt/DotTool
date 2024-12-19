@@ -56,7 +56,22 @@ func main() {
 			log.Fatal(err)
 		}
 
-		err = os.WriteFile(config.GitRepoDir+stat.Name(), file, 0644)
+		out_dir := filepath.Join(
+			config.GitRepoDir,
+			filepath.Base(filepath.Dir(path)),
+		)
+
+		out_file := filepath.Join(
+			out_dir,
+			stat.Name(),
+		)
+
+		err = os.MkdirAll(out_dir, os.ModePerm)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		err = os.WriteFile(out_file, file, os.ModePerm)
 		if err != nil {
 			log.Fatal(err)
 		}
